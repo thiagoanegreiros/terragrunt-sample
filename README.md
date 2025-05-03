@@ -25,6 +25,7 @@ The structure is separated by environments (`dev`, `prod`) and includes automate
 ├── project.hcl               # Shared project-level variables
 ├── .tflint.hcl               # Linting configuration
 ├── .pre-commit-config.yaml   # Pre-commit hooks
+├── root.hcl   # main reusable hcl file
 
 ## ⚙️ Features
 
