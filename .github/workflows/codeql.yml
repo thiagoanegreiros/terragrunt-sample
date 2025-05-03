@@ -1,10 +1,10 @@
-name: "CodeQL"
+name: CodeQL
 
 on:
   push:
-    branches: ["main"]
+    branches: [main]
   pull_request:
-    branches: ["main"]
+    branches: [main]
 
 jobs:
   analyze:
@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ "terraform" ]
+        language: [terraform]
 
     steps:
       - name: Checkout repository
@@ -29,7 +29,7 @@ jobs:
         with:
           languages: ${{ matrix.language }}
 
-      - name: Autobuild (No-op for TF, but required)
+      - name: Autobuild
         run: echo "No build step needed for Terraform"
 
       - name: Perform CodeQL Analysis
