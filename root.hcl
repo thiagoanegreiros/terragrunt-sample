@@ -8,7 +8,6 @@ locals {
   project_name = local.project_vars.locals.project_name
   region = local.environment_vars.locals.region
   env = local.environment_vars.locals.environment
-  aws_profile = local.environment_vars.locals.aws_profile
 
   key = "${local.project_name}-${local.env}-${local.region}"
   tags = {
@@ -23,10 +22,7 @@ generate "provider" {
   if_exists = "ovelsite_terragrunt"
   contents  = <<EOF
 provider "aws" {
-  region = "${local.region}"
-  %{ if local.aws_profile != "" }
-  profile = "${local.aws_profile}"
-  %{ endif }
+  region = "${local.region}"s
   default_tags {
     tags = {
 ${join("\n", [for key, value in local.tags : "      ${key} = \"${value}\""])}
