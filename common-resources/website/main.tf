@@ -1,5 +1,8 @@
 resource "aws_s3_bucket" "site_bucket" {
   bucket = var.bucket_name
+  versioning_configuration {
+    status = "Enabled"
+  }
 }
 
 resource "aws_s3_bucket_website_configuration" "site" {
@@ -58,6 +61,10 @@ resource "aws_s3_bucket" "cloudfront_logs" {
   tags = {
     Name        = "${var.bucket_name}-cf-logs"
     Environment = var.env
+  }
+
+  versioning_configuration {
+    status = "Enabled"
   }
 }
 
@@ -188,6 +195,9 @@ resource "aws_wafv2_web_acl" "cloudfront_waf" {
 
 resource "aws_s3_bucket" "backup_site_bucket" {
   bucket = "${var.bucket_name}-backup"
+  versioning_configuration {
+    status = "Enabled"
+  }
 }
 
 resource "aws_s3_bucket_policy" "backup_bucket_policy" {
