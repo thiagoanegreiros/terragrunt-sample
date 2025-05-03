@@ -78,7 +78,7 @@ terraform {
     execute = [
       "checkov",
       "--skip-check",
-      "CKV_TF_1,CKV_TF_2,CKV_AWS_174",
+      "CKV_TF_1,CKV_TF_2",
       "-d",
       ".",
       "--quiet",
