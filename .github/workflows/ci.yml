@@ -42,6 +42,13 @@ jobs:
         working-directory: envs/dev/front
         run: terraform fmt -check -recursive
 
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4.1.0
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: GitHubActionsSession
+          aws-region: us-east-1
+
       - name: Terraform Validate
         working-directory: envs/dev/front
         run: terragrunt validate
