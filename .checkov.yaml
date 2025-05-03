@@ -1,0 +1,7 @@
+framework:
+  - all
+
+directory:
+  - common-resources
+
+skip-check:

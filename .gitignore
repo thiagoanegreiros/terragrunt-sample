@@ -1,0 +1,28 @@
+# release files for azure devops releases dynamic creation
+organization/**/release*.json
+projects/**/release*.json
+
+# Local .terraform directories
+**/.terraform/*
+**/.terragrunt-cache/*
+**/*.lock.hcl
+
+# workspace settings
+**/settings.json
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+
+
+# Ignore CLI configuration files
+.terraformrc
+terraform.rc
+# .terraform.lock.hcl
+tmp_source
+.terraform
+
+envs/**/*.tf

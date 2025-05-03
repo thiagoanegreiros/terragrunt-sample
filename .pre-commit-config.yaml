@@ -1,0 +1,25 @@
+default_stages: [pre-push]
+
+default_install_hook_types: [pre-push]
+
+repos:
+  - repo: local
+    hooks:
+      - id: terraform_tflint
+        name: TFLint
+        entry: ./.vscode/run-tflint.sh
+        language: script
+        always_run: true
+        pass_filenames: false
+      - id: terraform_tftest
+        name: Terraform Tests
+        entry: ./.vscode/run-tftests.sh
+        language: script
+        always_run: true
+        pass_filenames: false
+      - id: terraform_checkov
+        name: Terraform Checkov
+        entry: ./.vscode/run-checkov-tests.sh
+        language: script
+        always_run: true
+        pass_filenames: false
