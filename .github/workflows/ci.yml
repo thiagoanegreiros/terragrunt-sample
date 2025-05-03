@@ -1,0 +1,59 @@
+name: CI - Terraform Dev Only
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  terraform-dev-checks:
+    name: Dev Terraform / Lint / Checkov
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.11.3
+
+      - name: Install Terragrunt
+        run: |
+          curl -sL https://github.com/gruntwork-io/terragrunt/releases/latest/download/terragrunt_linux_amd64 -o /usr/local/bin/terragrunt
+          chmod +x /usr/local/bin/terragrunt
+
+      - name: Install TFLint
+        run: |
+          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+          tflint --init
+
+      - name: Install Checkov
+        run: |
+          pip install checkov
+
+      - name: Terraform Format Check
+        working-directory: envs/dev/front
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Validate
+        working-directory: envs/dev/front
+        run: terragrunt validate
+
+      - name: TFLint
+        working-directory: envs/dev/front
+        run: tflint --recursive
+
+      - name: Checkov
+        working-directory: envs/dev/front
+        run: checkov -d . --quiet --framework terraform
+
+      - name: Terraform Init
+        working-directory: envs/dev/front
+        run: terragrunt init -input=false
+      
+      - name: Terraform Plan
+        working-directory: envs/dev/front
+        run: terragrunt plan -input=false
