@@ -19,16 +19,17 @@ locals {
 
 generate "provider" {
   path      = "provider.tf"
-  if_exists = "ovelsite_terragrunt"
+  if_exists = "overwrite_terragrunt"
   contents  = <<EOF
 provider "aws" {
-  region = "${local.region}"s
+  region = "${local.region}"
   default_tags {
     tags = {
 ${join("\n", [for key, value in local.tags : "      ${key} = \"${value}\""])}
     }
   }
 }
+
 terraform {
   required_version = ">= 1.11.2"
   required_providers {
@@ -78,8 +79,6 @@ terraform {
       "checkov",
       "-d",
       ".",
-      #"--skip-check",
-      #"CKV_TF_1,CKV_TF_2,CKV_AWS_51,CKV_AWS_305",
       "--quiet",
       "--framework",
       "terraform"
