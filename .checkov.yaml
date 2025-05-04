@@ -5,18 +5,7 @@ directory:
   - common-resources
 
 skip-check:
-  - CKV_TF_1
-  - CKV_TF_2
-  - CKV2_AWS_6
-  - CKV2_AWS_32
-  - CKV_AWS_174
-  - CKV_AWS_144
-  - CKV_AWS_21
-  - CKV_AWS_145
-  - CKV_AWS_18
-  - CKV2_AWS_61
-  - CKV2_AWS_62
-  - CKV2_AWS_47
-  - CKV2_AWS_42
-  - CKV2_AWS_65
-  - CKV2_AWS_31
+  - CKV_AWS_18 # No need for access logging
+  - CKV2_AWS_42 # Assign a custom Domain costs money
+  - CKV2_AWS_62 # No need for event notifications in this case
+  - CKV_AWS_144 # No need for cross region replication
