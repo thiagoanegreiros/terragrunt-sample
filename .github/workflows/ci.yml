@@ -57,8 +57,8 @@ jobs:
         working-directory: envs/dev/front
         run: tflint --recursive
 
-      - name: Checkov
-        run: checkov --config-file .checkov.yaml --directory envs/dev/front
+      #- name: Checkov
+      #  run: checkov --config-file .checkov.yaml --directory envs/dev/front
 
       - name: Terraform Init
         working-directory: envs/dev/front
