@@ -5,7 +5,7 @@
 ![Terragrunt](https://img.shields.io/badge/Terragrunt-0.56+-blue)
 ![Checkov](https://img.shields.io/badge/Checkov-passed-brightgreen)
 ![TFLint](https://img.shields.io/badge/TFLint-configured-informational)
-![Pre-commit](https://img.shields.io/badge/pre--commit-hooks-enabled-success)
+![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen.svg)
 
 This is an **Infrastructure-as-Code (IaC)** project using **Terragrunt** over **Terraform**, designed to deploy a modular and versioned AWS infrastructure with CI/CD validation.
 
