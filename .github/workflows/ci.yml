@@ -59,7 +59,7 @@ jobs:
 
       - name: Checkov
         working-directory: envs/dev/front
-        run: checkov -d . --quiet --framework terraform
+        run: checkov --config-file ../../../../.checkov.yaml
 
       - name: Terraform Init
         working-directory: envs/dev/front
