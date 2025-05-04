@@ -1,5 +1,6 @@
 # ☁️ Infrastructure as Code with Terragrunt & Terraform
 
+![CI](https://github.com/thiagoanegreiros/terragrunt-sample/actions/workflows/ci.yml/badge.svg)
 ![Terraform](https://img.shields.io/badge/Terraform-1.6+-blueviolet)
 ![Terragrunt](https://img.shields.io/badge/Terragrunt-0.56+-blue)
 ![Checkov](https://img.shields.io/badge/Checkov-passed-brightgreen)
