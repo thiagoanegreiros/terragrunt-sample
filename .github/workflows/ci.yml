@@ -64,3 +64,27 @@ jobs:
       - name: Terraform Plan
         working-directory: envs/dev/front
         run: terragrunt plan -input=false
+
+      - name: Install Infracost
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/infracost/infracost/master/scripts/install.sh | sh
+          echo "$HOME/.infracost/bin" >> $GITHUB_PATH
+
+      - name: Setup Infracost API key
+        run: |
+          echo "INFRACOST_API_KEY=${{ secrets.INFRACOST_API_KEY }}" >> $GITHUB_ENV
+
+      - name: Generate Infracost breakdown
+        working-directory: envs/dev/front
+        run: |
+          infracost breakdown \
+            --path . \
+            --terraform-plan-flags="-input=false" \
+            --terraform-command=plan \
+            --usage-file infracost-usage.yml \
+            --format json \
+            --out-file infracost-out.json
+
+      - name: Output Infracost cost estimate
+        run: |
+          infracost output --path infracost-out.json --format table
