@@ -7,19 +7,24 @@ sync_repo:
     - deploy
     - docker
   image:
-    name: alpine/git
-    entrypoint: [""]
-  script:
+    name: alpine:3.20
+    entrypoint: [""]         # garante que o ENTRYPOINT é /bin/sh
+  before_script:
+    - apk add --no-cache git openssh
     - git --version
+  script:
     - git config --global user.email "sync-bot@gitlab.com"
     - git config --global user.name "GitLab Sync Bot"
 
-    - git clone "https://oauth2:${github_token}@github.com/thiagoanegreiros/terragrunt-sample.git" src
+    # Clona do GitHub (fonte)
+    - git clone --mirror "https://oauth2:${github_token}@github.com/thiagoanegreiros/terragrunt-sample.git" src
+
     - cd src
 
+    # Adiciona o remoto do GitLab (destino)
     - git remote set-url origin "https://oauth2:${gitlab_token}@gitlab.meta.com.br/tecnologia/devops/mirror-sample.git"
 
-    - git push origin --all
-    - git push origin --tags
+    # Faz push espelhado para o GitLab
+    - git push origin --mirror
   only:
     - schedules
