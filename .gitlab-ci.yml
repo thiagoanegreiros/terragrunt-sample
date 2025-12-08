@@ -1,0 +1,25 @@
+stages:
+  - sync
+
+sync_repo:
+  stage: sync
+  tags:
+    - deploy
+    - docker
+  image:
+    name: alpine/git
+    entrypoint: [""]
+  script:
+    - git --version
+    - git config --global user.email "sync-bot@gitlab.com"
+    - git config --global user.name "GitLab Sync Bot"
+
+    - git clone "https://oauth2:${github_token}@github.com/thiagoanegreiros/terragrunt-sample.git" src
+    - cd src
+
+    - git remote set-url origin "https://oauth2:${gitlab_token}@gitlab.meta.com.br/tecnologia/devops/mirror-sample.git"
+
+    - git push origin --all
+    - git push origin --tags
+  only:
+    - schedules
