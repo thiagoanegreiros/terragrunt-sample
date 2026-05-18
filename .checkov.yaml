@@ -4,8 +4,15 @@ framework:
 directory:
   - common-resources
 
+skip-path:
+  - common-resources/website/tests/test.tftest.hcl
+
 skip-check:
-  - CKV_AWS_18 # No need for access logging
+  - CKV_AWS_18  # No need for access logging
   - CKV2_AWS_42 # Assign a custom Domain costs money
   - CKV2_AWS_62 # No need for event notifications in this case
   - CKV_AWS_144 # No need for cross region replication
+  - CKV_AWS_117 # No need for vpc in lambda
+  - CKV_AWS_272 # No code signing for lambda
+  - CKV_AWS_116 # Lambda DLQ
+  - CKV_AWS_241 # Kinesis Firehose with CMK

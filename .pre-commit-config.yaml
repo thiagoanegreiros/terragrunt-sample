@@ -1,25 +1,67 @@
 default_stages: [pre-push]
 
-default_install_hook_types: [pre-push]
+default_install_hook_types: [pre-commit, pre-push]
 
 repos:
   - repo: local
     hooks:
+      # ── pre-commit (fast — run on every commit) ────────────────────────────
+      - id: tofu_fmt
+        name: Tofu Format Check
+        entry: tofu fmt -check -recursive common-resources/
+        language: system
+        always_run: true
+        pass_filenames: false
+        stages: [pre-commit, pre-push]
+
+      - id: hclfmt_check
+        name: HCL Format Check
+        entry: ./.vscode/run-hclfmt-check.sh
+        language: script
+        always_run: true
+        pass_filenames: false
+        stages: [pre-commit, pre-push]
+
+      - id: opa_coverage
+        name: OPA Coverage Check
+        entry: ./.vscode/run-opa-coverage.sh
+        language: script
+        always_run: true
+        pass_filenames: false
+        stages: [pre-commit, pre-push]
+
+      # ── pre-push (slower — run before push) ───────────────────────────────
       - id: terraform_tflint
         name: TFLint
         entry: ./.vscode/run-tflint.sh
         language: script
         always_run: true
         pass_filenames: false
-      - id: terraform_tftest
-        name: Terraform Tests
-        entry: ./.vscode/run-tftests.sh
-        language: script
-        always_run: true
-        pass_filenames: false
+
       - id: terraform_checkov
         name: Terraform Checkov
         entry: ./.vscode/run-checkov-tests.sh
+        language: script
+        always_run: true
+        pass_filenames: false
+
+      - id: terraform_conftest
+        name: Conftest (OPA)
+        entry: ./.vscode/run-conftest.sh
+        language: script
+        always_run: true
+        pass_filenames: false
+
+      - id: tofu_tests
+        name: Tofu Tests
+        entry: ./.vscode/run-tofu-test.sh
+        language: script
+        always_run: true
+        pass_filenames: false
+
+      - id: tofu_validate
+        name: Tofu Validate
+        entry: ./.vscode/run-validate-all.sh
         language: script
         always_run: true
         pass_filenames: false

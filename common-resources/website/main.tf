@@ -1,19 +1,20 @@
 resource "aws_kms_key" "s3_default" {
   description         = "KMS key for S3 default encryption"
   enable_key_rotation = true
+  tags                = var.tags
 
   policy = jsonencode({
     Version = "2012-10-17",
     Id      = "kms-s3-policy",
-    Statement: [
+    Statement : [
       {
-        Sid: "AllowRootAccount",
-        Effect: "Allow",
-        Principal: {
-          AWS: "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+        Sid : "AllowRootAccount",
+        Effect : "Allow",
+        Principal : {
+          AWS : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
         },
-        Action: "kms:*",
-        Resource: "*"
+        Action : "kms:*",
+        Resource : "*"
       }
     ]
   })
@@ -21,6 +22,7 @@ resource "aws_kms_key" "s3_default" {
 
 resource "aws_s3_bucket" "site_bucket" {
   bucket = var.bucket_name
+  tags   = var.tags
 }
 
 resource "aws_s3_bucket_versioning" "site_bucket" {
@@ -50,11 +52,11 @@ resource "aws_s3_bucket_lifecycle_configuration" "site_bucket_lifecycle" {
     status = "Enabled"
 
     expiration {
-      days = 90  # apaga objetos após 90 dias
+      days = 90 # apaga objetos após 90 dias
     }
 
     filter {
-      prefix = ""  # aplica a todos os objetos
+      prefix = "" # aplica a todos os objetos
     }
   }
 
@@ -63,7 +65,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "site_bucket_lifecycle" {
     status = "Enabled"
 
     abort_incomplete_multipart_upload {
-      days_after_initiation = 7  # ou 1~30 dias, conforme sua política
+      days_after_initiation = 7 # ou 1~30 dias, conforme sua política
     }
 
     filter {
@@ -107,7 +109,7 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Effect    = "Allow"
+      Effect = "Allow"
       Principal = {
         AWS = aws_cloudfront_origin_access_identity.oai.iam_arn
       }
@@ -122,13 +124,9 @@ resource "aws_cloudfront_origin_access_identity" "oai" {
 }
 
 resource "aws_s3_bucket" "cloudfront_logs" {
-  bucket = "${var.bucket_name}-cf-logs"
+  bucket        = "${var.bucket_name}-cf-logs"
   force_destroy = true
-
-  tags = {
-    Name        = "${var.bucket_name}-cf-logs"
-    Environment = var.env
-  }
+  tags          = var.tags
 }
 
 resource "aws_s3_bucket_versioning" "cloudfront_logs_versioning" {
@@ -158,11 +156,11 @@ resource "aws_s3_bucket_lifecycle_configuration" "cloudfront_logs_bucket_lifecyc
     status = "Enabled"
 
     expiration {
-      days = 90  # apaga objetos após 90 dias
+      days = 90 # apaga objetos após 90 dias
     }
 
     filter {
-      prefix = ""  # aplica a todos os objetos
+      prefix = "" # aplica a todos os objetos
     }
   }
 
@@ -171,7 +169,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "cloudfront_logs_bucket_lifecyc
     status = "Enabled"
 
     abort_incomplete_multipart_upload {
-      days_after_initiation = 7  # ou 1~30 dias, conforme sua política
+      days_after_initiation = 7 # ou 1~30 dias, conforme sua política
     }
 
     filter {
@@ -189,8 +187,8 @@ resource "aws_s3_bucket_policy" "cf_logs_policy" {
     Version = "2012-10-17",
     Statement = [
       {
-        Sid       = "AllowCloudFrontServicePrincipal",
-        Effect    = "Allow",
+        Sid    = "AllowCloudFrontServicePrincipal",
+        Effect = "Allow",
         Principal = {
           Service = "cloudfront.amazonaws.com"
         },
@@ -219,6 +217,7 @@ resource "aws_wafv2_rule_group" "ddos_protection" {
   name     = "ddos-protection"
   scope    = "CLOUDFRONT"
   capacity = 100
+  tags     = var.tags
 
   rule {
     name     = "rate-limit"
@@ -260,23 +259,24 @@ resource "aws_wafv2_web_acl_logging_configuration" "cloudfront_waf_logging" {
 resource "aws_kms_key" "firehose" {
   description         = "KMS key for encrypting Kinesis Firehose stream"
   enable_key_rotation = true
+  tags                = var.tags
 
   policy = jsonencode({
     Version = "2012-10-17",
     Id      = "key-firehose-policy",
     Statement = [
       {
-        Sid       = "Allow root account full access",
-        Effect    = "Allow",
+        Sid    = "Allow root account full access",
+        Effect = "Allow",
         Principal = {
           AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
         },
-        Action    = "kms:*",
-        Resource  = "*"
+        Action   = "kms:*",
+        Resource = "*"
       },
       {
-        Sid       = "Allow Firehose to use the key",
-        Effect    = "Allow",
+        Sid    = "Allow Firehose to use the key",
+        Effect = "Allow",
         Principal = {
           Service = "firehose.amazonaws.com"
         },
@@ -286,7 +286,7 @@ resource "aws_kms_key" "firehose" {
           "kms:GenerateDataKey*",
           "kms:DescribeKey"
         ],
-        Resource  = "*",
+        Resource = "*",
         Condition = {
           StringEquals = {
             "kms:ViaService" = "firehose.us-east-1.amazonaws.com"
@@ -299,6 +299,7 @@ resource "aws_kms_key" "firehose" {
 
 resource "aws_iam_role" "firehose_role" {
   name = "firehose-role"
+  tags = var.tags
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
@@ -312,8 +313,9 @@ resource "aws_iam_role" "firehose_role" {
 }
 
 resource "aws_s3_bucket" "waf_logs" {
-  bucket = "my-waf-logs-bucket"
+  bucket        = "my-waf-logs-bucket"
   force_destroy = true
+  tags          = var.tags
 }
 
 resource "aws_s3_bucket_versioning" "waf_logs_bucket_versioning" {
@@ -353,11 +355,11 @@ resource "aws_s3_bucket_lifecycle_configuration" "waf_logs_bucket_lifecycle" {
     status = "Enabled"
 
     expiration {
-      days = 90  # apaga objetos após 90 dias
+      days = 90 # apaga objetos após 90 dias
     }
 
     filter {
-      prefix = ""  # aplica a todos os objetos
+      prefix = "" # aplica a todos os objetos
     }
   }
 
@@ -366,7 +368,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "waf_logs_bucket_lifecycle" {
     status = "Enabled"
 
     abort_incomplete_multipart_upload {
-      days_after_initiation = 7  # ou 1~30 dias, conforme sua política
+      days_after_initiation = 7 # ou 1~30 dias, conforme sua política
     }
 
     filter {
@@ -378,10 +380,11 @@ resource "aws_s3_bucket_lifecycle_configuration" "waf_logs_bucket_lifecycle" {
 resource "aws_kinesis_firehose_delivery_stream" "waf_logs" {
   name        = "waf-logs"
   destination = "extended_s3"
+  tags        = var.tags
   server_side_encryption {
-    enabled = true
-    key_type    = "CUSTOMER_MANAGED_CMK"
-    key_arn     = aws_kms_key.firehose.arn
+    enabled  = true
+    key_type = "CUSTOMER_MANAGED_CMK"
+    key_arn  = aws_kms_key.firehose.arn
   }
 
   extended_s3_configuration {
@@ -398,6 +401,7 @@ resource "aws_wafv2_web_acl" "cloudfront_waf" {
   name        = "cloudfront-waf"
   scope       = "CLOUDFRONT"
   description = "WAF with DDOS"
+  tags        = var.tags
 
   default_action {
     block {}
@@ -490,6 +494,7 @@ resource "aws_wafv2_web_acl" "cloudfront_waf" {
 
 resource "aws_s3_bucket" "backup_site_bucket" {
   bucket = "${var.bucket_name}-backup"
+  tags   = var.tags
 }
 
 resource "aws_s3_bucket_versioning" "backup_site_bucket_versioning" {
@@ -528,11 +533,11 @@ resource "aws_s3_bucket_lifecycle_configuration" "backup_site_bucket_lifecycle" 
     status = "Enabled"
 
     expiration {
-      days = 90  # apaga objetos após 90 dias
+      days = 90 # apaga objetos após 90 dias
     }
 
     filter {
-      prefix = ""  # aplica a todos os objetos
+      prefix = "" # aplica a todos os objetos
     }
   }
 
@@ -541,7 +546,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "backup_site_bucket_lifecycle" 
     status = "Enabled"
 
     abort_incomplete_multipart_upload {
-      days_after_initiation = 7  # ou 1~30 dias, conforme sua política
+      days_after_initiation = 7 # ou 1~30 dias, conforme sua política
     }
 
     filter {
@@ -556,7 +561,7 @@ resource "aws_s3_bucket_policy" "backup_bucket_policy" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Effect    = "Allow"
+      Effect = "Allow"
       Principal = {
         AWS = aws_cloudfront_origin_access_identity.oai.iam_arn
       }
@@ -572,6 +577,7 @@ data "aws_cloudfront_response_headers_policy" "security_headers" {
 
 resource "aws_cloudfront_distribution" "cdn" {
   default_root_object = "index.html"
+  tags                = var.tags
 
   origin {
     domain_name = aws_s3_bucket.site_bucket.bucket_regional_domain_name
@@ -617,11 +623,11 @@ resource "aws_cloudfront_distribution" "cdn" {
 
   default_cache_behavior {
     response_headers_policy_id = data.aws_cloudfront_response_headers_policy.security_headers.id
-    target_origin_id       = "FailoverGroup"
-    viewer_protocol_policy = "redirect-to-https"
+    target_origin_id           = "FailoverGroup"
+    viewer_protocol_policy     = "redirect-to-https"
 
-    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
-    cached_methods   = ["GET", "HEAD"]
+    allowed_methods = ["GET", "HEAD", "OPTIONS"]
+    cached_methods  = ["GET", "HEAD"]
 
     forwarded_values {
       query_string = true

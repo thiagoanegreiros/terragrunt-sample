@@ -20,19 +20,15 @@
     {
       "label": "Run Unit Tests",
       "type": "shell",
-      "command": "go test",
-      "args": [
-        "./..."
-      ],
-      "group": "test",
+      "command": "./.vscode/run-tofu-test.sh",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "presentation": {
         "reveal": "always",
         "panel": "new"
       },
-      "problemMatcher": "$go",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      }
-    },
+      "group": "test"
+    }
   ]
 }
