@@ -54,11 +54,10 @@ EOF
 remote_state {
   backend = "s3"
   config = {
-    region       = "${local.region}"
-    bucket       = "tf-${local.key}"
-    key          = "${path_relative_to_include()}/terraform.tfstate"
-    encrypt      = true
-    use_lockfile = true
+    region  = "${local.region}"
+    bucket  = "tf-${local.key}"
+    key     = "${path_relative_to_include()}/terraform.tfstate"
+    encrypt = true
   }
   generate = {
     path      = "backend.tf"
