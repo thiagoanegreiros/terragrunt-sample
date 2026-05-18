@@ -10,7 +10,6 @@
 This is an **Infrastructure-as-Code (IaC)** project using **Terragrunt** over **Terraform**, designed to deploy a modular and versioned AWS infrastructure with CI/CD validation.
 
 The structure is separated by environments (`dev`, `prod`) and includes automated security/static checks using `Checkov`, `TFLint`, and `pre-commit`.
-
 ---
 
 ## 🌍 Structure Overview
