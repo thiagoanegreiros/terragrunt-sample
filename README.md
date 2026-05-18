@@ -1,13 +1,13 @@
-# ☁️ Infrastructure as Code with Terragrunt & Terraform
+# ☁️ Infrastructure as Code with Terragrunt & OpenTofu
 
 ![CI](https://github.com/thiagoanegreiros/terragrunt-sample/actions/workflows/ci.yml/badge.svg)
-![Terraform](https://img.shields.io/badge/Terraform-1.6+-blueviolet)
+![OpenTofu](https://img.shields.io/badge/OpenTofu-1.9+-blueviolet)
 ![Terragrunt](https://img.shields.io/badge/Terragrunt-0.56+-blue)
 ![Checkov](https://img.shields.io/badge/Checkov-passed-brightgreen)
 ![TFLint](https://img.shields.io/badge/TFLint-configured-informational)
 ![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen.svg)
 
-This is an **Infrastructure-as-Code (IaC)** project using **Terragrunt** over **Terraform**, designed to deploy a modular and versioned AWS infrastructure with CI/CD validation.
+This is an **Infrastructure-as-Code (IaC)** project using **Terragrunt** over **OpenTofu**, designed to deploy a modular and versioned AWS infrastructure with CI/CD validation.
 
 The structure is separated by environments (`dev`, `prod`) and includes automated security/static checks using `Checkov`, `TFLint`, and `pre-commit`.
 ---
@@ -31,7 +31,7 @@ The structure is separated by environments (`dev`, `prod`) and includes automate
 ## ⚙️ Features
 
 - ✅ Terragrunt with environment inheritance  
-- ✅ Modular Terraform using local structure  
+- ✅ Modular OpenTofu using local structure  
 - ✅ S3 + CloudFront + WAF + ACM  
 - ✅ Optional origin failover for CloudFront  
 - ✅ GitHub Actions-ready  
@@ -77,7 +77,7 @@ pre-commit install
 This project demonstrates:
 
 - Clean, DRY infrastructure architecture with Terragrunt  
-- Secure and validated Terraform deployments  
+- Secure and validated OpenTofu deployments  
 - Environment-specific configurations using layered HCL  
 - Real-world patterns for scaling IaC in teams  
 
