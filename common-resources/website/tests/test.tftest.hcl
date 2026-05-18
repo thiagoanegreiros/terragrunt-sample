@@ -4,6 +4,11 @@ mock_provider "aws" {
       arn = "arn:aws:iam::123456789012:role/mock-role"
     }
   }
+  mock_resource "aws_kms_key" {
+    defaults = {
+      arn = "arn:aws:kms:us-east-1:123456789012:key/mock-kms-key-id"
+    }
+  }
   mock_resource "aws_s3_bucket" {
     defaults = {
       arn                         = "arn:aws:s3:::mock-bucket"

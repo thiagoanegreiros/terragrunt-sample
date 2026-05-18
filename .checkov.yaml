@@ -16,3 +16,4 @@ skip-check:
   - CKV_AWS_272 # No code signing for lambda
   - CKV_AWS_116 # Lambda DLQ
   - CKV_AWS_241 # Kinesis Firehose with CMK
+  - CKV_AWS_174 # CloudFront TLS v1.2 requires custom ACM cert (skipped alongside CKV2_AWS_42)
