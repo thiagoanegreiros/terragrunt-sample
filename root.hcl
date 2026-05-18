@@ -35,7 +35,7 @@ ${join("\n", [for key, value in local.tags : "      ${key} = \"${value}\""])}
 
 #OPENTOFU
 terraform {
-  required_version = "1.11.6"
+  required_version = ">= 1.9.0"
   required_providers {
     aws = {
       source  = "hashicorp/aws"

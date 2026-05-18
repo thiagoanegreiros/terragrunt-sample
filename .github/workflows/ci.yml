@@ -1,4 +1,4 @@
-name: CI - Terraform Dev Only
+name: CI - OpenTofu Dev Only
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   terraform-dev-checks:
-    name: Dev Terraform / Lint / Checkov
+    name: Dev OpenTofu / Lint / Checkov
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -19,10 +19,10 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
+      - name: Set up OpenTofu
+        uses: opentofu/setup-opentofu@v1
         with:
-          terraform_version: 1.11.3
+          tofu_version: 1.9.1
 
       - name: Install Terragrunt
         run: |
@@ -38,9 +38,9 @@ jobs:
         run: |
           pip install checkov==3.2.410
 
-      - name: Terraform Format Check
+      - name: OpenTofu Format Check
         working-directory: envs/dev/front
-        run: terraform fmt -check -recursive
+        run: tofu fmt -check -recursive
 
       - name: Configure AWS Credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4.1.0

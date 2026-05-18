@@ -112,7 +112,7 @@ Hooks run on `pre-push` (not pre-commit) and execute TFLint, Terraform tests, an
 
 ## Tool Versions
 
-- Terraform: `>= 1.11.2` (CI uses 1.11.3; local install via `tfenv` at 1.11.2)
+- OpenTofu: `>= 1.9.0` (CI uses 1.9.1 via `opentofu/setup-opentofu@v1`)
 - AWS provider: `~> 5.91`
 - TFLint AWS plugin: `v0.38.0`
 - Checkov: `3.2.410` (in CI)
