@@ -17,3 +17,10 @@ skip-check:
   - CKV_AWS_116 # Lambda DLQ
   - CKV_AWS_241 # Kinesis Firehose with CMK
   - CKV_AWS_174 # CloudFront TLS v1.2 requires custom ACM cert (skipped alongside CKV2_AWS_42)
+  - CKV_AWS_50  # Lambda X-Ray tracing - overhead e custo nao justificados para backend basico
+  - CKV_AWS_115 # Lambda reserved concurrency - gerenciado pelo usuario, nao imposto pelo modulo
+  - CKV_AWS_173 # Lambda env var KMS - modulo nao gerencia secrets; valores sensiveis devem vir via SSM
+  - CKV_AWS_158 # CloudWatch log group KMS - adiciona custo sem ganho para logs de execucao
+  - CKV_AWS_338 # CloudWatch log retention >= 1 ano - configuravel via log_retention_days; curto adequado para dev
+  - CKV2_AWS_51 # API Gateway mTLS - nao requerido para HTTP API basica
+  - CKV_AWS_309 # API Gateway route authorization type - rota publica por design; auth gerenciada pela aplicacao

@@ -1,0 +1,9 @@
+{
+  "name": "ta-tg-sample-dev-backend",
+  "version": "1.0.0",
+  "description": "Lambda backend for ta-tg-sample dev environment",
+  "main": "index.js",
+  "engines": {
+    "node": ">=22"
+  }
+}

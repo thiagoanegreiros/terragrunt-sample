@@ -3,5 +3,5 @@ include "root" {
 }
 
 include "common" {
-  path = "${dirname(find_in_parent_folders("root.hcl"))}/common-resources/backend.hcl"
+  path = "${dirname(find_in_parent_folders("root.hcl"))}/common-resources/exposed-backend.hcl"
 }
