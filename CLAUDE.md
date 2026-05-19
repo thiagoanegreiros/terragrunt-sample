@@ -59,68 +59,32 @@ infracost breakdown --path envs/dev/front
 
 ## Architecture
 
-### Directory Layout
+See [architecture.md](architecture.md) for the full repository structure, module inventory, config hierarchy, and CI/CD details.
 
-```
-root.hcl                    # Root Terragrunt config — provider, backend, hooks, tags
-envs/
-  project.hcl               # Shared project variables (project_name)
-  dev/
-    env.hcl                 # Environment-specific vars (env name, AWS region)
-    front/terragrunt.hcl    # CloudFront/S3 stack config for dev
-    back/terragrunt.hcl     # Backend stack config for dev
-  prod/
-    env.hcl
-    front/terragrunt.hcl
-    back/terragrunt.hcl
-common-resources/
-  website.hcl               # Terragrunt module wrapper
-  website/                  # Reusable Terraform module
-    main.tf                 # All AWS resources
-    variables.tf
-    outputs.tf
+## Definition of Done
+
+Before marking any task complete, run these in order and confirm all pass:
+
+```bash
+./.vscode/run-tofu-test.sh
+./.vscode/run-tflint.sh
+./.vscode/run-checkov-tests.sh
+./.vscode/run-conftest.sh
 ```
 
-### Terragrunt Inheritance Pattern
+Then verify:
+- [ ] No `.tf` files created outside `common-resources/`
+- [ ] No sensitive values hardcoded — account IDs, ARNs, secrets must use SSM Parameter Store
+- [ ] Every new or modified variable has `description`, `type`, and `validation` where applicable
+- [ ] Every new resource has the required tags or inherits them via `merge()`
+- [ ] If a new module was created: `tests/test.tftest.hcl` exists alongside it
 
-Each stack's `terragrunt.hcl` reads config up the directory tree:
+## Hard Rules
 
-1. `root.hcl` — AWS provider generation, S3 remote state backend, tflint/checkov hooks, default tags
-2. `envs/project.hcl` — project name (`ta-tg-sample`)
-3. `envs/{env}/env.hcl` — environment name and AWS region
-4. Stack-level `info.hcl` — stack-specific variables
-
-Remote state is automatically namespaced: bucket `tf-{project}-{env}-{region}`, key `{relative_path}/terraform.tfstate`.
-
-### Website Module (`common-resources/website/`)
-
-Deploys a complete static website stack:
-- **S3**: Primary bucket + backup bucket for failover + logs bucket (all KMS-encrypted, versioned, public access blocked)
-- **CloudFront**: Origin failover (primary → backup S3), OAI for private S3 access, TLS 1.2+, geo-restriction to Brazil (BR), security headers policy
-- **WAF v2**: Rate limiting (500 req/5min per IP), AWS Managed Rules (KnownBadInputs, CommonRuleSet, AnonymousIpList)
-- **Kinesis Firehose**: WAF log delivery to S3 (GZIP-compressed, CMK-encrypted)
-
-### CI/CD (GitHub Actions — `.github/workflows/ci.yml`)
-
-Triggered on push to master, PRs, and manual dispatch. Authenticates to AWS via OIDC (no static credentials). Steps: format check → AWS auth → validate/lint → init → plan → Infracost cost estimate. Working directory: `envs/dev/front`.
-
-GitLab CI (`.gitlab-ci.yml`) is solely for mirroring this repo from GitHub to GitLab on a schedule.
-
-### Pre-commit Hooks
-
-Hooks run on `pre-push` (not pre-commit) and execute TFLint, Terraform tests, and Checkov in sequence. Configured in `.pre-commit-config.yaml`.
-
-## Tool Versions
-
-- OpenTofu: `>= 1.9.0` (CI uses 1.9.1 via `opentofu/setup-opentofu@v1`)
-- AWS provider: `~> 5.91`
-- TFLint AWS plugin: `v0.38.0`
-- Checkov: `3.2.410` (in CI)
-
-## Skipped Checkov Rules
-
-Documented in `.checkov.yaml` with reasons:
-- `CKV_AWS_18` — S3 access logging (cost decision)
-- `CKV2_AWS_42` — CloudFront custom domain
-- `CKV2_AWS_62` — S3 event notifications
-- `CKV_AWS_144` — S3 cross-region replication
+- **Never create `.tf` resources outside `common-resources/`** — all Terraform logic lives in reusable modules there; `envs/` stacks only hold Terragrunt config.
+- **Never edit Terragrunt-generated files** (`provider.tf`, `backend.tf`, `<module-name>.tf` inside `envs/`) — they are overwritten on every run.
+- **Never run `terragrunt apply` without explicit user confirmation** — always show the plan and wait for a yes/no before applying.
+- **Always run `tofu test` before proposing changes to any module in `common-resources/`** — tests must pass before suggesting the change is safe.
+- **Every module in `common-resources/` must ship with `tests/test.tftest.hcl`** — non-negotiable even if not asked. If asked to create a module without tests, create them anyway.
+- **Never add skips to `.checkov.yaml` without discussion** — existing skips are intentional trade-offs; new ones require the same justification.
+- **Sensitive values must only be referenced via SSM Parameter Store** — never hardcode them in `info.hcl` or any tracked file.
